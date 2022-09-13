@@ -1,0 +1,27 @@
+升序数组
+int e[100] = {10,20,30,40,50,60,70,80,90,100};
+	
+//binary_search()	（找查元素是否出现） ？ 1 ：0；
+	
+if(binary_search(e,e + 9,50))	//是否能找到数组中有50这个元素 
+	
+//lower_bound() 	找查大于等于x的位置
+	
+int pos = lower_bound(e,e + 9,40) - e;	//注意要 -e (初始位置）
+cout<<pos<<endl;	//输出为3，即下标从0开始的数组中找到第4个数 
+	  
+pos = lower_bound(e + 1,e + 9,40) - e;	
+cout<<pos<<endl;	//查询返回仍是数组内真实下标，不和输入界限有关，仍输出3 
+	
+//upper_bound() 	找查大于x的位置	  (没有等于)
+//用法和lower_bound() 一样 
+return 0;
+
+初始化
+vector<vector<int>> vec(n,vec<int>(m,0)); //a[n][m]初始化为0
+排序
+sort(vec.begin(),vec.end(),greater<int>() );
+查找
+lower_bound(vec.begin(),vec.end(),n,greater<int>() );
+插入
+vec.insert(vec.begin()+i,'a') //第i个位置前插入'a'

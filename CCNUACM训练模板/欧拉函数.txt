@@ -1,0 +1,58 @@
+LL phi(LL x)
+{
+    LL res = x;
+    for (LL i = 2; i*i<= x ; ++i)
+    {
+        if (x % i == 0)
+        {
+            res = res / i * (i - 1); // 筛去res中i倍数
+            while (x % i == 0) x /= i;  // 唯一分解定理
+        }
+    }
+    if (x > 1) res = res / x * (x - 1);//x是素数的情况
+    return res;
+}
+//欧拉函数ф(n)是小于n且与n互质的数的数目
+
+int phi[maxn+10];
+void Euler(int n)
+{
+    phi[1]=1;
+    for(int i=2;i<=n;++i)
+        phi[i]=0;
+    for(int i=2;i<=n;++i)
+    {
+        if(!phi[i])
+        {
+            for(int j=i;j<=n;j+=i)
+            {
+                if(!phi[j])
+                    phi[j]=j;
+                phi[j]=phi[j]/i*(i-1);//  /i*(i-1)是重复度
+            }
+        }
+    }
+}
+线性筛素数，欧拉筛
+ll prime[maxn];      //就是个素数表
+bool sf[maxn];        //判断这个数是不是素数，sf[i]中的i是从1到maxn的数
+void sushu()
+{         
+    ll num=0;        //num 用来记筛到第几个质数
+    memset(sf,true,sizeof(sf));
+    sf[1] = false;
+    sf[0] = false;  //1 0 特判 
+    for(int i = 2;i <= maxn; i ++)
+    {         
+        if(sf[i]) 
+	prime[++num] = i;      //如果是质数就加入素数表
+        for(int j = 1;j <= num;j ++)    //内层枚举num以内的质数
+        {      
+           	 if(i * prime[j] > maxn) break; //筛完结束
+            	 sf[i * prime[j]] = false;      //筛掉...
+           	 if(i % prime[j] == 0) break;  //避免重复筛！！对于某个范围内的任意合数，只能由其最小的质因子将其从表中删除。优化至O（n）
+        }
+    } 
+}
+
+

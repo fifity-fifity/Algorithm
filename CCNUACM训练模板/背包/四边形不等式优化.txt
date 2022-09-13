@@ -1,0 +1,15 @@
+区间单调性:任意l<l1<r1<r，w(l1,r1)<w(l,r)
+四边形不等式 l<l1<r<r1,w(l1,r1)+w(l,r)<=w(l,r1)+w(l1,r)
+定理一：若w（l，r）满足区间包含单调性和四边形不等式，则fl,r 满足四边形不等式
+定理二：ml,r-1<=ml,r<=ml+1,r
+// C++ Version
+for (int len = 2; len <= n; ++len)  // 枚举区间长度
+  for (int l = 1, r = len; r <= n; ++l, ++r) {
+    // 枚举长度为len的所有区间
+    f[l][r] = INF;
+    for (int k = m[l][r - 1]; k <= m[l + 1][r]; ++k)
+      if (f[l][r] > f[l][k] + f[k + 1][r] + w(l, r)) {
+        f[l][r] = f[l][k] + f[k + 1][r] + w(l, r);  // 更新状态值
+        m[l][r] = k;  // 更新（最小）最优决策点
+      }
+  }

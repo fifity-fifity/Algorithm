@@ -1,0 +1,63 @@
+//SCC+2SAT
+#include <bits/stdc++.h>
+#define PII pair<int,int>
+#define inf 0x3f3f3f3f
+using namespace std;
+const int N=3e3;
+const int mod=998244353;
+vector<int> g[N+5];
+int dfn[N+5],dfs_cnt,low[N+5],scc[N+5],scc_cnt;
+stack<int> st;
+void tarjan(int now){
+    dfn[now]=low[now]=++dfs_cnt;
+    st.push(now);
+    for(auto x:g[now]){
+        if(!dfn[x]){
+            tarjan(x);
+            low[now]=min(low[now],low[x]);
+        }
+        else if(!scc[x]){//x仍在栈中
+            low[now]=min(low[now],dfn[x]);
+        }
+    }
+    if(low[now]==dfn[now]){//now及其上方节点构成一个scc
+        scc_cnt++;
+        while(true){
+            int x=st.top();st.pop();
+            scc[x]=scc_cnt;
+            if(x==now) break;
+        }
+    }
+    return ;
+}
+signed main()
+{
+    int n,m;
+    while(scanf("%d%d",&n,&m)!=EOF){
+        while(st.size()) st.pop();
+        for(int i=0;i<2*n;++i){
+            dfn[i]=dfs_cnt=low[i]=scc[i]=scc_cnt=0;
+            g[i].clear();
+        }
+        for(int i=1;i<=m;++i){
+            int a,b,x,y;scanf("%d%d%d%d",&a,&b,&x,&y);
+            a=2*a+x;
+            b=2*b+y;
+            g[a].push_back(b^1);
+            g[b].push_back(a^1);
+        }
+
+        for(int i=0;i<2*n;++i){
+            if(!dfn[i]) tarjan(i);
+        }
+        int fl=1;
+        for(int i=0;i<2*n;i+=2){
+            if(scc[i]==scc[i+1]){
+                fl=0;
+            }
+        }
+        if(fl) puts("YES");
+        else puts("NO");
+    }
+    return 0;
+}

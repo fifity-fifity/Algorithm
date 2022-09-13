@@ -1,0 +1,15 @@
+for(int i=1;i<=5;++i)
+        cin>>a[i];
+    map<int,int> mp;
+    set <int> st;//set自动排序，自动去重，也是一颗红黑树
+    for(int i=1;i<=5;++i)
+        st.insert(a[i]);
+    int cnt=0;
+    for(auto &i:st)//遍历set
+    {
+        mp[i]=++cnt;
+    }
+    for(auto &i:mp)//遍历map
+    {
+        printf("%d %d\n",i.first,i.second);
+    }

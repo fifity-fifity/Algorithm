@@ -1,0 +1,52 @@
+//求解严格第k大的背包
+#include<bits/stdc++.h>
+#define int long long
+#define endl '\n'
+using namespace std;
+
+const int N=1e5;
+int dp[1005][55],a[55],b[55];
+int val[N+5],w[N+5];
+signed main()
+{
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0);
+    int t;cin>>t;
+    while(t--)
+    {
+        int n,v,k;cin>>n>>v>>k;
+        memset(dp,0,sizeof dp);
+        for(int i=1;i<=n;++i)
+            cin>>val[i];
+        for(int i=1;i<=n;++i)
+            cin>>w[i];
+        int ans=0;
+        for(int i=1;i<=n;++i)
+        {
+            for(int j=v;j>=w[i];j--)
+            {
+                int p=1;
+                for(p=1;p<=k;++p)
+                {
+                    a[p]=dp[j][p];
+                    b[p]=dp[j-w[i]][p]+val[i];
+                }
+                a[p]=b[p]=-1;
+                int c=1,x=1,y=1;
+                while(c<=k&&(a[x]!=-1||b[y]!=-1))
+                {
+                    if(a[x]>b[y])
+                        dp[j][c]=a[x],x++;
+                    else
+                        dp[j][c]=b[y],y++;
+                    if(dp[j][c]!=dp[j][c-1])
+                        c++;
+                }
+                ans=max(ans,dp[j][k]);
+            }
+        }
+        cout<<ans<<endl;
+    }
+
+    return 0;
+}

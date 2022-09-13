@@ -1,0 +1,149 @@
+//单点修改维护+树上两点间的权值和以及最大值
+//优先更新重子节点
+
+#include <bits/stdc++.h>
+#define PII pair<int,int>
+#define int long long
+#define LL long long
+using namespace std;
+const int N=1e5;
+int fa[N+5],son[N+5],sz[N+5],dep[N+5];
+int id[N+5],top[N+5],ff[N+5],cnt; //id记录一个dfs序
+int a[N+5];
+vector<int> vec[N+5];
+struct node{
+    int l,r,mx,sum;
+}tree[4*N+50];
+void push_up(int i)
+{
+    tree[i].mx=max(tree[2*i].mx,tree[2*i+1].mx);
+    tree[i].sum=tree[i*2].sum+tree[i*2+1].sum;
+}
+void build(int i,int l,int r)
+{
+    tree[i].l=l;
+    tree[i].r=r;
+    tree[i].mx=-1e15;
+    tree[i].sum=0;
+    if(l==r)
+    {
+        return ;
+    }
+    int mid=(l+r)/2;
+    build(i*2,l,mid);
+    build(i*2+1,mid+1,r);
+}
+void update(int i,int l,int r,int val)
+{
+    if(tree[i].r<l||tree[i].l>r)
+        return ;
+    if(tree[i].l>=l&&tree[i].r<=r)
+    {
+        tree[i].mx=val;
+        tree[i].sum=val;
+        return ;
+    }
+    update(i*2,l,r,val);
+    update(i*2+1,l,r,val);
+    push_up(i);
+}
+int query_max(int i,int l,int r)
+{
+    if(tree[i].l>r||tree[i].r<l)
+        return -1e15;        //返回最小值
+    if(tree[i].l>=l&&tree[i].r<=r)
+        return tree[i].mx;
+    return max(query_max(i*2,l,r),query_max(i*2+1,l,r));
+}
+int query_sum(int i,int l,int r){
+    if(tree[i].l>r||tree[i].r<l)
+        return 0;
+    if(tree[i].l>=l&&tree[i].r<=r)
+        return tree[i].sum;
+    return query_sum(i*2,l,r)+query_sum(2*i+1,l,r);
+
+}
+
+int dfs1(int now,int d,int pre){
+    fa[now]=pre;
+    dep[now]=d;
+    sz[now]=1;
+    int mx=-1;
+    for(auto x:vec[now]){
+        if(x==pre) continue;
+        sz[now]+=dfs1(x,d+1,now);
+        if(sz[x]>mx){
+            mx=sz[x];
+            son[now]=x;
+        }
+    }
+    return sz[now];
+}
+void dfs2(int now,int pre){
+    id[now]=++cnt;
+    if(now==son[fa[now]]) top[now]=top[fa[now]];
+    else top[now]=now;
+    if(son[now]) dfs2(son[now],now); //优先更新重子节点
+    for(auto x:vec[now]){
+        if(x==pre) continue;
+        if(x==son[now]) continue;
+        dfs2(x,now);
+    }
+}
+signed main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    int n;cin>>n;
+    for(int i=1;i<=n-1;++i){
+        int u,v;cin>>u>>v;
+        vec[u].push_back(v);
+        vec[v].push_back(u);
+    }
+    dfs1(1,0,0);
+    dfs2(1,0);
+    build(1,1,n);
+    for(int i=1;i<=n;++i){
+        cin>>a[i];
+        update(1,id[i],id[i],a[i]);
+    }
+    /*for(int i=1;i<=n;++i)
+        cout<<query_max(1,id[i],id[i])<<endl;*/
+    int q;cin>>q;
+    while(q--){
+        string op;cin>>op;
+        int u,v;cin>>u>>v;
+        if(op=="CHANGE"){
+            update(1,id[u],id[u],v);
+        }
+        else if(op=="QMAX"){
+            int mx=-1e15;
+            while(top[u]!=top[v]){
+                if(dep[top[u]]<dep[top[v]])
+                    swap(u,v);
+                mx=max(mx,query_max(1,id[top[u]],id[u]));
+                u=fa[top[u]];
+            }
+            if(id[u]>id[v]) swap(u,v);
+            mx=max(mx,query_max(1,id[u],id[v]));
+            cout<<mx<<endl;
+        }
+        else{
+            int ans=0;
+            while(top[u]!=top[v]){
+                if(dep[top[u]]<dep[top[v]])
+                    swap(u,v);
+                ans+=query_sum(1,id[top[u]],id[u]);
+                u=fa[top[u]];
+            }
+            if(id[u]>id[v]) swap(u,v);
+            ans+=query_sum(1,id[u],id[v]);
+            cout<<ans<<endl;
+        }
+    }
+
+    return 0;
+}
+/*
+
+*/

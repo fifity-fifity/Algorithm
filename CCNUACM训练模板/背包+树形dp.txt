@@ -1,0 +1,147 @@
+01背包
+for(int i=1;i<=n;++i)
+{
+    for(int j=V;j>=w[i];j--)
+    {
+        dp[j]=max(dp[j],dp[j-w[i]]+val[i]);
+    }
+}
+
+完全背包
+for(int i=1;i<=n;++i)//第i件物品
+{
+    for(int j=w[i];j<=V;++j)//枚举体积
+    {
+        dp[j]=max(dp[j],dp[j-w[i]]+val[i]);
+    }
+}
+
+多重背包
+for(int i=1;i<=n;++i)//物品件数
+{
+    int num=cnt[i]; //第i件物品的数量
+    for(int k=1;num>0;k*=2) //二进制优化，将n件物品分成logn件
+    {
+        if(k>num)
+            k=num;
+        num-=k;
+        for(int j=V;j>=w[i]*k;--j)
+        {
+            dp[j]=max(dp[j],dp[j-w[i]*k]+val[i]*k);
+        }
+    }
+}
+
+混合背包
+if（ 01背包）
+else if（完全背包）
+else if（多重背包）
+
+
+分组背包：每组物品只拿一个
+for(int k=1;k<=cnt;++k)//枚举组数
+{
+    for(int j=V;j>=0;j--)//枚举容量
+    {
+        for(int i=1;i<=n;++i)//枚举物品
+        {
+            if(j>w[i]) //保证合理性
+                dp[j]=max(dp[j],dp[j-w]+val);
+        }
+    }
+}
+
+二维费用
+for(int k=1;k<=n;++k)
+{
+   for(int i=m;i>=mi;i--) //枚举价值
+   {
+       for(int j=t;j>=tj;j--) //枚举时间
+        dp[i][j]=max(dp[i][j],dp[i-mi][j-tj]+val);
+   }
+}
+
+二维费用：https://atcoder.jp/contests/abc219/tasks/abc219_d
+
+有依赖的背包(树形dp+分组背包)
+O(n*n)// (e.g.  https://codeforces.com/contest/816/problem/E)
+void dfs(int u)
+{
+    dp[u][0]=0;
+    dp[u][1]=a[u].val;//更新当前花费一个节点的价值
+    for(auto v:vec[u])//遍历u的子节点
+    {
+        dfs(v);//更新子节点
+        for(int j=sz[u];j>=1;j--)//j>=1表示根节点物品一定要选
+        {
+            for(int k=0;k<=sz[v];++k)
+            {
+                dp[u][j+k]=max(dp[u][j+k],dp[u][j]+dp[v][k]);
+            }
+        }
+        sz[u]+=sz[v];
+    }
+}
+O(n*v*v)（金明的预算）
+void dfs(int u)
+{
+    for(int i=a[u].w;i<=v;++i)
+        dp[u][i]=a[u].val;
+    for(auto x:vec[u])
+    {
+        dfs(x);
+        for(int j=v;j>=a[u].w;j--)
+        {
+            for(int k=0;k<=j-a[u].w;++k)
+            {
+                if(dp[u][j]<dp[u][j-k]+dp[x][k])
+                    dp[u][j]=dp[u][j-k]+dp[x][k];
+            }
+        }
+    }
+}
+利用dfs序优化O(n*v) （金明的预算）
+void dfs(int u)
+{
+    cnt[u]=1;//cnt记录节点u的大小
+    for(auto x:vec[u])
+    {
+        dfs(x);
+        cnt[u]+=cnt[x];
+    }
+    num[++tot]=u;//num记录一个dfs序列
+}
+for(int i=1;i<=n;++i)
+{
+       for(int j=0;j<=v;j++)
+       {
+             if(j>=a[num[i]].w) 
+                dp[i][j]=max(dp[i-cnt[num[i]]][j],dp[i-1][j-a[num[i]].w]+a[num[i]].val);//选该节点
+             else 
+                dp[i][j]=dp[i-cnt[num[i]]][j];//不选该节点，由子树转移
+        }
+ }
+
+
+通配符匹配：
+f[i][j]=f[i][j-1] || f[i-1][j]; if(t[j]=='*);//f[i][j-1]表示当前t[j]=='*'匹配空字符，f[i-1][j]表示t[j]=='*'再多匹配一个字符s[i]
+f[i][j]=f[i-1]j-1];if(s[i]==t[j] || t[j]=='?')
+
+最长上升子序列
+
+单调队列优化dp：连续的m个或者每隔m个必须选择一个
+    int q[N+5];//单调递增栈求最小值
+
+    int hh=0,tt=0;
+    for(int i=1;i<=n;++i)
+    {
+        while(hh<=tt&&q[hh]<i-k-1) hh++;
+        dp[i]=dp[q[hh]]+a[i];
+        while(hh<=tt&&dp[q[tt]]>dp[i]) tt--;
+        q[++tt]=i;
+    }
+    int ans=inff;
+    for(int i=n-k;i<=n;++i)
+        ans=min(ans,dp[i]);
+    cout<<sum-ans<<endl;
+//最多选择连续的k个并使得结果最大

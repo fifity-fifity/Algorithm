@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+#define PII pair<int,int>
+#define int long long
+using namespace std;
+const int N=1e5;
+const int mod=1e9+7;
+vector<int> g[N+5];
+int low[N+5],dfsn[N+5],id;
+vector<int> ans;
+void tarjan(int now,int mx){
+    low[now]=dfsn[now]=++id;
+    int child=0;
+    for(auto x:g[now]){
+        if(!dfsn[x]){
+            tarjan(x,0);
+            low[now]=min(low[now],low[x]);
+            child+=(low[x]>=dfsn[now]);
+        }
+        else
+            low[now]=min(low[now],dfsn[x]);
+    }
+    if(child>mx){
+        ans.push_back(now);
+    }
+}
+signed main()
+{
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0);std::cout.tie(0);
+    memset(low,0x3f,sizeof low);
+    int n,m;cin>>n>>m;
+    for(int i=1;i<=m;++i){
+        int u,v;cin>>u>>v;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+    for(int i=1;i<=n;++i){
+        if(!dfsn[i]){
+            tarjan(i,1);
+        }
+    }
+    cout<<ans.size()<<endl;
+    sort(ans.begin(),ans.end());
+    for(auto x:ans){
+        cout<<x<<" ";
+    }
+    cout<<endl;
+    return 0;
+}
+/*
+
+*/

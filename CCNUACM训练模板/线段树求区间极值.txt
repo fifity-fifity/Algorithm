@@ -1,0 +1,97 @@
+/*
+线段树可维护所有associative operation (a*b)*c=a*(b*c)
+e.g. & , | , ^ min,max,*,sum,gcd (求gcd的时间复杂度是(logn) ),
+
+*/
+struct node{
+    int l,r,mi,mx,numi,numx;
+    node():numi(inf){;}
+}tree[4*N+50];
+void push_up(int i)
+{
+    tree[i].mx=max(tree[2*i].mx,tree[2*i+1].mx);
+    if(tree[2*i].mx>tree[2*i+1].mx) tree[i].numx=tree[2*i].numx;
+    else if(tree[2*i].mx<tree[2*i+1].mx) tree[i].numx=tree[2*i+1].numx;
+    else tree[i].numx=tree[2*i].numx+tree[2*i+1].numx;
+    tree[i].mi=min(tree[2*i].mi,tree[2*i+1].mi);
+    if(tree[2*i].mi>tree[2*i+1].mi) tree[i].numi=tree[2*i+1].numi;
+    else if(tree[2*i].mi<tree[2*i+1].mi) tree[i].numi=tree[2*i].numi;
+    else tree[i].numi=tree[2*i].numi+tree[2*i+1].numi;
+}
+void build(int i,int l,int r)
+{
+    tree[i].l=l;
+    tree[i].r=r;
+    tree[i].mi=inf;
+    tree[i].mx=-inf;
+    if(l==r)
+    {
+        tree[i].mx=tree[i].mi=a[l];//a[l]不是a[i]！！
+        tree[i].numi=tree[i].numx=1;
+        return ;
+    }
+    int mid=(l+r)/2;
+    build(i*2,l,mid);
+    build(i*2+1,mid+1,r);
+    push_up(i);
+}
+void update(int i,int l,int r,int val)
+{
+    if(tree[i].r<l||tree[i].l>r)
+        return ;
+    if(tree[i].l>=l&&tree[i].r<=r)
+    {
+        tree[i].mx=val;
+        tree[i].mi=val;
+        return ;
+    }
+    update(i*2,l,r,val);
+    update(i*2+1,l,r,val);
+    push_up(i);
+}
+int query_max(int i,int l,int r)
+{
+    if(tree[i].l>r||tree[i].r<l)
+        return -inf;        //返回最小值
+    if(tree[i].l>=l&&tree[i].r<=r)
+        return tree[i].mx;
+    return max(query_max(i*2,l,r),query_max(i*2+1,l,r));
+}
+int query_min(int i,int l,int r)
+{
+    if(tree[i].l>r||tree[i].r<l)
+        return inf;         //返回最大值
+    if(tree[i].l>=l&&tree[i].r<=r)
+        return tree[i].mi;
+    return min(query_min(i*2,l,r),query_min(i*2+1,l,r));
+}
+int query_numi(int i,int l,int r)// 询问操作不用再向上更新，当前节点已经是最新状态。
+{
+    if(tree[i].l>r||tree[i].r<l) //节点i不能更新
+        return 0;                   //返回0对结果无影响
+    if(tree[i].l>=l&&tree[i].r<=r) //节点i能完全更新
+    {
+        return tree[i].numi;
+    }
+    if(query_min(2*i,l,r)<query_min(2*i+1,l,r))
+        return query_numi(2*i,l,r);
+    else if(query_min(2*i,l,r)>query_min(2*i+1,l,r))
+        return query_numi(2*i+1,l,r);
+    else
+        return query_numi(2*i,l,r)+query_numi(2*i+1,l,r);
+}
+int query_numx(int i,int l,int r)// 询问操作不用再向上更新，当前节点已经是最新状态。
+{
+    if(tree[i].l>r||tree[i].r<l) //节点i不能更新
+        return 0;                   //返回0对结果无影响
+    if(tree[i].l>=l&&tree[i].r<=r) //节点i能完全更新
+    {
+        return tree[i].numx;
+    }
+    if(query_max(2*i,l,r)<query_max(2*i+1,l,r))
+        return query_numx(2*i+1,l,r);
+    else if(query_max(2*i,l,r)>query_max(2*i+1,l,r))
+        return query_numx(2*i,l,r);
+    else
+        return query_numx(2*i,l,r)+query_numx(2*i+1,l,r);
+}

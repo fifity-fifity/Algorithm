@@ -1,0 +1,86 @@
+//每个点有一种颜色
+//求每个节点的子树的占领点的点权和
+#include <bits/stdc++.h>
+#define int long long
+using namespace std;
+const int N=1e5;
+const int mod=1e9+7;
+int n,sz[N+5],son[N+5];;
+int dfn=0,sum=0,mx=0,cnt[N+5],ans[N+5],col[N+5];
+int skip;
+vector<int> g[N+5];
+
+int dfs(int now,int pre){
+    sz[now]=1;
+    int mx=-1;
+    for(auto x:g[now]){
+        if(x==pre) continue;
+        dfs(x,now);
+        sz[now]+=sz[x];
+        if(sz[x]>mx){
+            mx=sz[x];
+            son[now]=x;
+        }
+    }
+    return sz[now];
+}
+void add(int now,int pre){
+    cnt[col[now]]++;
+    if(cnt[col[now]]>mx){
+       mx=cnt[col[now]];
+       sum=col[now];
+    }
+    else if(cnt[col[now]]==mx){
+        sum+=col[now];
+    }
+    for(auto &x:g[now]){
+        if(x==pre||x==skip)
+            continue;
+        add(x,now);
+    }
+}
+void del(int now,int pre){
+    cnt[col[now]]--;
+    for(auto &x:g[now]){
+        if(x==pre||x==skip)
+            continue;
+        del(x,now);
+    }
+}
+void solve(int now,int pre,int keep){
+    for(auto &x:g[now]){
+        if(x==pre||x==son[now])
+            continue;
+        solve(x,now,0);
+    }
+    if(son[now]){
+        solve(son[now],now,1);
+        skip=son[now];
+    }
+    add(now,pre);
+    skip=0;
+    ans[now]=sum;
+    if(keep==0){
+        del(now,pre);
+        sum=mx=0;
+    }
+}
+signed main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    cin>>n;
+    for(int i=1;i<=n;++i)
+        cin>>col[i];
+    for(int i=1;i<=n-1;++i){
+        int u,v;cin>>u>>v;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+    dfs(1,0);
+    solve(1,0,1);
+    for(int i=1;i<=n;++i)
+        cout<<ans[i]<<" "
+    cout<<endl;
+    return 0;
+}

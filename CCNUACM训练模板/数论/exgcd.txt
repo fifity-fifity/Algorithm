@@ -1,0 +1,12 @@
+int ex_gcd (int a, int b, int &x, int &y) {
+	if(b == 0) {x = 1; y = 0; return 0;}
+	int g = ex_gcd(b, a % b, y, x);
+	y -= a / b * x;
+	return g;
+}
+
+//ax + by == n
+//exgcd (a, b, x, y);
+//x *= n / g; y *= n / g;// (x, y) is one of the solutions
+//xx = x + b / gcd(a, b) * k , then we can solve the yy by the equation ax + by == n 
+//yy = y + a / gcd(a, b) * k

@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=1e6;
+int lg[N+5],fa[N+5][25],dep[N+5];
+int n,m,s;
+vector<int> g[N+5];
+void init()
+{
+    for(int i=2;i<=N;++i)
+        lg[i]=lg[i/2]+1;
+}
+void dfs(int now,int father)
+{
+    dep[now]=dep[father]+1;
+    fa[now][0]=father;
+    for(int i=1;i<=lg[dep[now]];i++)
+        fa[now][i]=fa[fa[now][i-1]][i-1];
+    for(auto x:g[now])
+    {
+        if(x==father) continue;
+        dfs(x,now);
+    }
+}
+int lca(int u,int v)
+{
+    if(dep[u]<dep[v]) swap(u,v);
+    while(dep[u]>dep[v]){
+        u=fa[u][lg[dep[u]-dep[v]]];
+    }
+    if(u==v) return u;
+    for(int i=lg[dep[u]];i>=0;i--)
+    {
+        if(fa[u][i]!=fa[v][i])
+            u=fa[u][i],v=fa[v][i];
+    }
+    return fa[u][0];
+}
+signed main()
+{
+    init();
+    scanf("%d%d%d",&n,&m,&s);
+    for(int i=1;i<=n-1;++i)
+    {
+        int u,v;scanf("%d%d",&u,&v);
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+    dfs(1,0);
+    for(int i=1;i<=m;++i)
+    {
+        int u,v;scanf("%d%d",&u,&v);
+        int temp=lca(u,v);
+        cout<<temp<<endl;
+    }
+    return 0;
+}

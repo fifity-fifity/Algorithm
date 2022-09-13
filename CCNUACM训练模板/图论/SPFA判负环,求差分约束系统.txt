@@ -1,0 +1,35 @@
+#define PII pair<int,int>
+int vis[N+5],dis[N+5],cnt[N+5];
+vector<PII> vec[N+5]; 
+bool spfa(int s)
+{
+    memset(dis,inf,sizeof(dis)); 
+    memset(vis,0,sizeof(vis));
+    memset(cnt,0,sizeof(cnt));
+    dis[s]=0;vis[s]=cnt[s]=1;//s为起点
+    queue<int> q;
+    q.push(s);
+    while(q.size())
+    {
+        int now=q.front();
+        q.pop();
+        vis[now]=0; //该点不在队列中
+        for(int i=0;i<vec[now].size();++i)
+        {
+            int v=vec[now][i].first;
+            int len=vec[now][i].second;
+            if(dis[v]>dis[now]+len)
+            {
+                dis[v]=dis[now]+len;
+                if(!vis[v])
+                {
+                    q.push(v);
+                    vis[v]=1;       //v入队
+                    if(++cnt[v]>n) //入队次数超过n
+                        return false;
+                }
+            }
+        }
+    }
+    return true;
+}

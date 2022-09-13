@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=1e6;
+int n,m,s,dep[N+5],fa[N+5],son[N+5],top[N+5],sz[N+5];
+vector<int> vec[N+5];
+//dfs1求所有节点的size, depth, fa,son(重链节点)
+int dfs1(int now,int pre,int d)
+{
+    dep[now]=d;
+    fa[now]=pre;
+    sz[now]=1;  //*
+    int mx=-1; 
+    for(auto x:vec[now]){
+        if(x==pre) continue;
+        sz[now]+=dfs1(x,now,d+1);
+        if(sz[x]>mx)
+        {
+            mx=sz[x];
+            son[now]=x;
+        }
+    }
+    return sz[now];
+}
+
+//dfs2求每个节点i沿着重链能往上跳的最高的节点top[i]
+void dfs2(int x,int pre)
+{
+    if(x==son[fa[x]]) top[x]=top[fa[x]];//当前点是重子节点
+    else top[x]=x;  //当前点是轻子节点
+    for(auto xx:vec[x]){
+        if(xx==pre) continue;
+        dfs2(xx,x);
+    }
+}
+int lca(int u,int v)
+{
+
+    while(top[u]!=top[v])
+    {
+        if(dep[top[u]]>dep[top[v]])
+            u=fa[top[u]];//*
+        else
+            v=fa[top[v]];
+
+    }
+    return dep[u]<dep[v]? u:v;
+}
+signed main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    cin>>n>>m>>s;
+    for(int i=1;i<=n-1;++i)
+    {
+        int u,v;cin>>u>>v;
+        vec[u].push_back(v);
+        vec[v].push_back(u);
+    }
+    dfs1(s,0,1);
+    dfs2(s,0);
+    for(int i=1;i<=m;++i)
+    {
+        int u,v;cin>>u>>v;
+        cout<<lca(u,v)<<endl;
+    }
+    return 0;
+}
+/*
+5 5 4
+3 1
+2 4
+5 1
+1 4
+2 4
+3 2
+3 5
+1 2
+4 5
+*/
