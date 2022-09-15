@@ -1,0 +1,15 @@
+//利用叉积，交叉相乘再相减
+
+struct P{
+    double x,y;
+};
+double cmp(P a,P b,P c){//叉积
+    return (b.x-a.x)*(c.y-a.y)-(c.x-a.x)*(b.y-a.y);
+}
+bool cmp2(P a,P b)
+{
+    P c={0,0};//极点
+    if(cmp(c,a,b)==0)
+        return a.x<b.x;
+    return cmp(c,a,b)>0;
+}

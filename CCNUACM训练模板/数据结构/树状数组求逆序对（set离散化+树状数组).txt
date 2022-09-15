@@ -1,0 +1,44 @@
+const int N=2e5;
+int d[N+5],a[N+5],cnt;
+set <int> st;
+map<int,int> mp;
+
+//lowbit函数
+int lowbit(int x)
+{
+    return x&-x;
+}
+//update函数
+void update(int p,int val)
+{
+    while(p<=N)
+    {
+        d[p]+=val;
+        p+=lowbit(p);
+    }
+}
+//query函数
+int query(int p)
+{
+    int res=0;
+    while(p)
+    {
+        res+=d[p];
+        p-=lowbit(p);
+    }
+    return res;
+}
+//离散化
+for(int i=1;i<=n;++i)
+{
+    cin>>a[i];
+    st.insert(a[i]);
+}
+for(auto &i:st)        //auto访问set，不会增加额外的时间
+    mp[i]=++cnt;    //把第i个数映射成++cnt
+LL res=0;
+for(int i=1;i<=n;++i)
+{
+    res+=query(n)-query(mp[a[i]]); //0-n有多少个数减去0-mp[a[i]]有多少数
+    update(mp[a[i]],1);
+}

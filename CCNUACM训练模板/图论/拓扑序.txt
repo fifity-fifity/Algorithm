@@ -1,0 +1,54 @@
+求一个拓扑序，判断环
+//二维数组存图,需考虑重边
+int map[N+5][N+5],path[N+5],in[N+5];
+int cnt=0;
+
+void top()
+{
+    priority_queue <int, vector<int> ,greater<int> > q;//保证输出结果字典序最小
+    for(int i=1;i<=n;++i)
+    {
+        if(indeg[i]==0) q.push(i);
+    }
+    while(q.size())
+    {
+        int u=q.top();
+        q.pop();
+        path[cnt++]=u;
+        for(int i=1;i<=n;++i)
+        {
+            if(mp[u][i]==1)
+            {
+                in[i]--;// in[i]--后为零才入列，不然会T
+                if(indeg[i]==0)  q.push(i);
+            }
+        }
+    }
+}
+如果cnt==n，则说明存在拓扑序
+
+
+//vector存图，不需考虑重边
+
+vector <int> G[N+5];
+int in[N+5],ans[N+5],cnt;
+
+void top()
+{
+    queue<int> q;
+    for(int i=0;i<26;++i)
+    {
+        if(in[i]==0) q.push(i);
+    }
+    while(q.size())
+    {
+        int u=q.front();
+        q.pop();
+        ans[cnt++]=u;
+        for(auto i:G[u])
+        {
+            in[i]--;// indeg[i]--后为零才入列，不然会T
+            if(in[i]==0) q.push(i);
+        }
+    }
+}

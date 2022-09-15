@@ -1,0 +1,25 @@
+弗洛伊德求多源最短路
+
+枚举中间点k
+for(int k=1;k<=n;++k)
+{
+    for(int i=1;i<=n;++i)
+    {
+        for(int j=1;j<=n;++j){
+            G[i][j]=min(G[i][j],G[i][k]+G[k][j]);
+            Path[i][j]=Path[i][k];
+          }
+    }
+}
+
+Path[v1][v2]储存的是v1->v2第一个中转z的消息。
+//输出路径
+int now,v1,v2;
+cin>>v1>>v2;
+now=Path[v1][v2];
+while(now!=v2)
+{
+       cout<<"->"<<now;
+       now=Path[now][v2];
+}
+cout<<"->"<<v2;

@@ -1,0 +1,87 @@
+01字典树
+const int maxn=1e5;
+int cnt;//多组输入要重置
+int tree[32*maxn][2];
+int exist[32*maxn];
+int val[32*maxn];
+
+memset(tree,0,sizeof(tree));
+memset(exist,0,sizof(exist)); //有删除操作时需该数组，记录每个节点出现次数
+
+（一）
+void tree_insert(int x )
+{
+    int p=0;
+    for(int i=30;i>=0;i--) //2的31次方爆signed int，unsigned int 只到2的32次方-1
+    {
+        int c=((x>>i)&1); 右移取出第i位数
+        if(tree[p][c]==0)
+        {
+            tree[p][c]=++cnt; //++cnt记录下个节点的编号，新开一个分支
+        }
+        p=tree[p][c];
+        exist[p]++;
+    }
+    val[p]=x; //存下该节点对应的数值
+}
+void update( int x,int add )
+{
+    int p=0;
+    for(int i=30;i>=0;i--)
+    {
+        int c=((x>>i)&1);
+        p=tree[p][c];
+        exist[p]+=add;
+    }
+}
+int query_max ( int x )
+{
+    int p=0;
+    for(int i=30;i>=0;i--)
+    {
+        int c=((x>>i)&1);
+        if(tree[p][c^1]&&exist[tree[p][c^1]])  //c为0取1，c为1取0
+            p=tree[p][c^1];
+        else
+            p=tree[p][c];
+    }
+    return x^val[p]; 
+}
+
+更新操作合并到tree_insert中
+（二）
+const int maxn=1e5;
+int cnt;
+int tree[32*maxn][2];
+int val[32*maxn];
+memset(tree,0,sizeof(tree));
+memset(exist,0,sizof(exist));
+
+void tree_insert(int x,int add)
+{
+    int p=0;
+    for(int i=30;i>=0;i--)
+    {
+        int c=((x>>i)&1);
+        if(tree[p][c]==0)
+        {
+            tree[p][c]=++cnt;
+        }
+        p=tree[p][c];
+        exist[p]+=add;
+    }
+    val[p]=x;
+}
+int query_max(int x)
+{
+    int p=0;
+    for(int i=30;i>=0;i--)
+    {
+        int c=((x>>i)&1);
+        if(tree[p][c^1]&&exist[tree[p][c^1]])
+            p=tree[p][c^1];
+        else
+            p=tree[p][c];
+    }
+    return x^val[p];
+}

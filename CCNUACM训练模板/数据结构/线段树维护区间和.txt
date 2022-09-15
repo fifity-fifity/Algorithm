@@ -1,0 +1,65 @@
+struct node{
+    int l,r,lazy,sum;
+}tree[4*N+5];
+int a[N+5];
+void push_up(int i)
+{
+    tree[i].sum=tree[2*i].sum+tree[2*i+1].sum;
+}
+
+void build(int i,int l,int r)
+{
+    tree[i].l=l;
+    tree[i].r=r;
+    tree[i].lazy=0;
+    tree[i].sum=0;
+    if(l==r)
+    {
+        tree[i].sum=a[l];   //等于a[l]，不是a[i]！！！
+        return ;
+    }
+    int mid=(l+r)/2;
+    build(2*i,l,mid);
+    build(2*i+1,mid+1,r);
+    push_up(i);
+}
+
+void push_down(int i)
+{
+    if(tree[i].lazy==0)
+        return ;
+    tree[2*i].sum+=(tree[2*i].r-tree[2*i].l+1)*tree[i].lazy;
+    tree[2*i].lazy+=tree[i].lazy;
+    tree[2*i+1].sum+=(tree[2*i+1].r-tree[2*i+1].l+1)*tree[i].lazy;
+    tree[2*i+1].lazy+=tree[i].lazy;
+    tree[i].lazy=0;
+}
+
+void update(int i,int l,int r,int val)//更新操作需向上更新，当前节点不一定是最新状态，l-r加上val
+{
+    if(tree[i].l>r||tree[i].r<l) //节点i不能更新
+        return ;
+    if(tree[i].l>=l&&tree[i].r<=r) //节点i能完全更新
+    {
+        tree[i].sum+=(tree[i].r-tree[i].l+1)*val;
+        tree[i].lazy+=val;
+        return ;
+    }
+    push_down(i); // 向下更新节点i
+    update(2*i,l,r,val);
+    update(2*i+1,l,r,val);
+    push_up(i); // 向上更新节点i
+}
+
+//O(logn)
+int query(int i,int l,int r)// 询问操作不用再向上更新，当前节点已经是最新状态。
+{
+    if(tree[i].l>r||tree[i].r<l) //节点i不能更新
+        return 0;                   //返回0对结果无影响
+    if(tree[i].l>=l&&tree[i].r<=r) //节点i能完全更新
+    {
+        return tree[i].sum;
+    }
+    push_down(i);  // 向下更新
+    return query(2*i,l,r)+query(2*i+1,l,r);
+}

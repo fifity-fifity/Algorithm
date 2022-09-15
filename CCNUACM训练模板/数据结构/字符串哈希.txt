@@ -1,0 +1,21 @@
+时间复杂度O(n)，少用二分
+双hash减少错误可能性
+#define ULL unsigned long long
+const int base=233,297,311;
+ULL pw[N+5]hs_a[N+5],hs_b[N+5];
+
+***初始化***
+pw[0]=1;
+for(int i=1;i<=N;++i)
+    pw[i]=pw[i-1]*base;
+
+hs_a[0]=hs_b[0]=0;
+for(int i=1;i<lena;++i)
+{
+    hs_a[i]=hs_a[i-1]*base+a[i]-'a';
+}
+//查询l到r的哈希值,查询15432中（2，3）会输出54
+ULL query(int l,int r)
+{
+    return hs_a[r]-hs_a[l-1]*pw[r-l+1];
+}

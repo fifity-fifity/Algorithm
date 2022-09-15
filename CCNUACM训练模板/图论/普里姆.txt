@@ -1,0 +1,35 @@
+#define inf 0x3f3f3f3f
+const int N=1e5;
+int g[N+5][N+5];//初始化为inf,点编号从1到n
+
+//返回值为-1表示图不连通，否则返回生成树的权值
+int primo()
+{
+    int ans=0;
+    for(int i=0;i<=n;++i) vis[i]=0;
+    for(int i=0;i<=n;++i) dis[i]=g[0][i];
+    vis[1]=1;   //起点为1
+    for(int i=1;i<=n-1;i++)
+    {
+        int _min=inf,p=-1;
+        for(int j=1;j<=n;++j)
+        {
+            if(!vis[j]&&_min>dis[i])
+            {
+                _min=dis[i];
+                p=j;
+            }
+        }
+        if(p==-1) return -1;
+        vis[p]=1;
+        ans+=_min;
+        for(int j=1;j<=n;++j)
+        {
+            if(!vis[j]&&dis[j]>g[p][j])
+            {
+                dis[j]=g[p][j];
+            }
+        }
+    }
+    return ans;
+}

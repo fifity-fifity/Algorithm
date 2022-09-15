@@ -1,0 +1,2 @@
+当不支持gets时，getline又比较慢，可以使用scarf("%[^\n]s", str)；
+	[^\n]表示读到\n结束

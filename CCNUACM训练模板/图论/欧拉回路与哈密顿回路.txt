@@ -1,0 +1,54 @@
+欧拉回路存在：无重边，度数全为偶数或只有2个奇点（欧拉路径）。
+dfs：O(v+e)时间内求路径。
+
+
+//欧拉回路，cnt==n+1表示存在欧拉回路，经过每条边1次回到起点
+vector<int> G[N+5];
+int in[N+5],out[N+5],vis[N+5];
+int path[N+5],cnt;
+map<PII,int> mp;
+void dfs(int u)
+{
+    for(auto i:G[u])
+    {
+        if(!mp[{u,i}])
+        {
+           mp[{u,i}]=1;
+           dfs(i);
+           path[cnt++]=i;
+        }
+    }
+}
+
+//哈密顿回路，经过每个点一次回到起点
+int dp[1<<N][N+5];//状态压缩
+int G[N+5][N+5],n,m;//初始化dp和G为inf,需特殊考虑重边
+int solve()
+{
+    int states=(1<<n);//所有状态
+    mem(dp,inf);
+    dp[1][0]=0;
+    for(int state=0;state<states;++state)  //枚举状态
+    {
+        for(int bit=0;bit<n;++bit)  //枚举选择第几个点
+        {
+            if(((state>>bit)&1)==1)  //如果state状态bit点已经被选择，则考虑该状态如何转移来
+            {
+                int mask=(1<<bit);
+                int prev_state=(state^(1<<bit));  //上一个状态
+                for(int prev=0;prev<n;++prev)  //枚举上一个状态下从哪个点转移到state状态
+                {
+                    if(((prev_state>>prev)&1)==1) //如果该点可以选择
+                    {
+                        dp[state][bit]=min(dp[state][bit],dp[prev_state][prev]+G[prev][bit]);//状态转移
+                    }
+                }
+            }
+        }
+    }
+    int res=inf;
+    for(int i=0;i<n;++i)
+        res=min(res,dp[states-1][i]+G[i][0]);//遍历所有点且回到点i的极值
+    if(res>=inf) return -1;
+    return res;
+}
