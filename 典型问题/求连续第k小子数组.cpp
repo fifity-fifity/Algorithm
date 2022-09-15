@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-int solve(vetor<int> &nums, int &k){
+int solve(vector<int> &nums, int &k){
 	int l = 0, r = 0;
 	for(int i = 0; i < nums.size(); ++i){
 		r += nums[i];
@@ -15,7 +15,7 @@ int solve(vetor<int> &nums, int &k){
 				res += (1 + i - l) * (i - l) / 2;
 			}
 			while(sum > k){
-				sum -= a[l];
+				sum -= nums[l];
 				l ++;
 			}
 		}
