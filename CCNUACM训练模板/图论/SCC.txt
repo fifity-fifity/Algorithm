@@ -1,4 +1,4 @@
-//SCC+2SAT
+//有向图求SCC + 2SAT
 #include <bits/stdc++.h>
 #define PII pair<int,int>
 #define inf 0x3f3f3f3f
@@ -20,7 +20,7 @@ void tarjan(int now){
             low[now]=min(low[now],dfn[x]);
         }
     }
-    if(low[now]==dfn[now]){//now及其上方节点构成一个scc
+    if(low[now]==dfn[now]){ //now及其上方节点构成一个scc
         scc_cnt++;
         while(true){
             int x=st.top();st.pop();

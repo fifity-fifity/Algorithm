@@ -2,23 +2,22 @@
 dfs：O(v+e)时间内求路径。
 
 
-//欧拉回路，cnt==n+1表示存在欧拉回路，经过每条边1次回到起点
+//欧拉回路，cnt==m+1表示存在欧拉回路，经过每条边1次回到起点
+//对于有向图
 vector<int> G[N+5];
 int in[N+5],out[N+5],vis[N+5];
 int path[N+5],cnt;
-map<PII,int> mp;
+int sz[N+5];
 void dfs(int u)
 {
-    for(auto i:G[u])
+    for(int i=sz[u];i<G[u].size();i++)
     {
-        if(!mp[{u,i}])
-        {
-           mp[{u,i}]=1;
-           dfs(i);
-           path[cnt++]=i;
-        }
+	sz[u]=i+1;
+          dfs( G[u][i] );
     }
+    path[cnt++]=u;
 }
+从path[cnt-1] -> path[0]为一个欧拉回路
 
 //哈密顿回路，经过每个点一次回到起点
 int dp[1<<N][N+5];//状态压缩

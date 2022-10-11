@@ -1,3 +1,15 @@
+一、SLF(Small Label First) 优化
+优化思路：将原队列改成双端队列，对要加入队列的点 p，
+如果 dist[p] 小于队头元素 u 的 dist[u]，将其插入到队头，否则插入到队尾。
+
+二、LLL(Large Label Last) 优化
+优化思路：对每个要出队的队头元素 u，比较 dist[u] 和队列中点的 dist 的平均值，
+如果 dist[u] 更大，将其弹出放到队尾，然后取队首元素进行相同操作，直到队头元素的 dist 小于等于平均值。
+//xa-xb>=c  -> xb-xa<=-c      add(a,b,-c)
+//xa-xb<=c     add(b,a,c)
+//xa==xb       add(a,b,0)  + add(b,a,0)
+//abs(xa-xb)==c   add(a,b,c)+ add(b,a,c)
+
 #define PII pair<int,int>
 int vis[N+5],dis[N+5],cnt[N+5];
 vector<PII> vec[N+5]; 

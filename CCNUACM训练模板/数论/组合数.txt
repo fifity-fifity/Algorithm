@@ -31,6 +31,11 @@ LL C(LL n, LL m)
         return 0;
     return ( fac[n]*inv(fac[m])%mod )*inv( fac[n-m] )%mod;
 }
+//Lucas定理：
+long long Lucas(long long n, long long m, long long p) {
+   if (m == 0) return 1;
+   return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p;
+}
 
 //@球同，盒同，可空
 for(int i=0;i<=n;++i) dp[i][1]=1;
@@ -116,7 +121,7 @@ int ans=dp[n][k]*fac[k];
 卡特兰数：有两种操作，分别为操作1和操作2，它们操作此时相同都为N,且在进行第K次操作二前都至少
 进行k次操作一，问有多少种情况。
 公式：
-1/(n+1)C(2n,n);
+1/(n+1)*C(2n,n);
 H(n+1)=(4n+2)/(n+2)H(n)
 1.由n个+1和n个-1组成的排列中，满足前缀和>=0的排列有Catalan(N)种。
 
