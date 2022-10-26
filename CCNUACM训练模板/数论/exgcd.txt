@@ -1,12 +1,19 @@
-int ex_gcd (int a, int b, int &x, int &y) {
-	if(b == 0) {x = 1; y = 0; return 0;}
-	int g = ex_gcd(b, a % b, y, x);
-	y -= a / b * x;
-	return g;
+// C++ Version
+int Exgcd(int a, int b, int &x, int &y) {
+  if (!b) {
+    x = 1;
+    y = 0;
+    return a;
+  }
+  int g = Exgcd(b, a % b, x, y);
+  int t = x;
+  x = y;
+  y = t - (a / b) * y;
+  return g;
 }
 
 //ax + by == n
-//exgcd (a, b, x, y);
-//x *= n / g; y *= n / g;// (x, y) is one of the solutions
-//xx = x + b / gcd(a, b) * k , then we can solve the yy by the equation ax + by == n 
+//exgcd (a, b, x, y), 求出来的时ax+by==gcd(a,b)的一组解，a,b,可以为负数
+//x *= n / g; y *= n / g;// (x, y) 是一组可行解
+//xx = x + b / gcd(a, b) * k , xx的通解，用xx可以推出yy
 //yy = y + a / gcd(a, b) * k

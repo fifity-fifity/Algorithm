@@ -23,7 +23,7 @@ int _find(int x)
 {
     if(x==fa[x]) return x;
     int temp=_find(fa[x]);		//压缩父节点路径并更新fa[x]到根节点权值	,不能省略，@(1)
-    dis[x]=(dis[x]+dis[fa[x]])%3;	//更新当前点x的权值为x->fa[x]+fa[x]->根节点
+    dis[x]=(dis[x]+dis[fa[x]])%3;	//更新当前点x的权值为(x->fa[x])+(fa[x]->根节点)
     return fa[x]=temp//=_find(fa[x]);		//利用temp减少递归cen数
 }
 void join(int u,int v,int x)
@@ -32,7 +32,7 @@ void join(int u,int v,int x)
     if(fu!=fv)//不在一个集合中
     {
         fa[fu]=fv;			//！！直接合并父节点
-        dis[fu]=(dis[v]-dis[u]+x+2)%3;	//向量法更新fu的权值
+        dis[fu]=(dis[v]+x-dis[u]+2)%3;	//向量法更新fu的权值
     }
 }
 //区间合并例题

@@ -34,7 +34,6 @@ void dfs2(int x,int pre)
 }
 int lca(int u,int v)
 {
-
     while(top[u]!=top[v])
     {
         if(dep[top[u]]>dep[top[v]])
@@ -43,7 +42,7 @@ int lca(int u,int v)
             v=fa[top[v]];
 
     }
-    return dep[u]<dep[v]? u:v;
+    return dep[u]<dep[v]? u:v;//跳到同一条链上
 }
 signed main()
 {
